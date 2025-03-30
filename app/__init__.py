@@ -1,0 +1,1 @@
+# Flask uygulaması için __init__.py dosyası 

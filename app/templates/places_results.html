@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">İşletme Arama Sonuçları</h2>
+    
+    <div class="mb-6 text-center">
+        <a href="{{ url_for('download_file', filename=filename) }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline inline-flex items-center">
+            <i class="fas fa-download mr-2"></i> CSV İndir
+        </a>
+        <a href="{{ url_for('index') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline ml-2 inline-flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i> Ana Sayfaya Dön
+        </a>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">İşletme Adı</th>
+                    <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Arama Noktası</th>
+                    <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for place in places %}
+                <tr class="hover:bg-gray-50">
+                    <td class="py-2 px-4 border-b border-gray-200 text-sm">{{ place.name }}</td>
+                    <td class="py-2 px-4 border-b border-gray-200 text-sm">{{ place.search_point_url }}</td>
+                    <td class="py-2 px-4 border-b border-gray-200 text-sm">
+                        <a href="{{ place.href }}" target="_blank" class="text-blue-500 hover:text-blue-700 mr-2">
+                            <i class="fas fa-external-link-alt"></i> Google Maps'te Aç
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <p class="text-blue-700 text-sm">Toplam {{ places|length }} işletme bulundu. İşletmelerin yorumlarını çekmek için, bir işletmenin Google Maps linkini kopyalayıp "Yorum Çekme" sekmesine yapıştırabilirsiniz.</p>
+    </div>
+</div>
+{% endblock %} 

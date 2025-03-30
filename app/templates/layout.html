@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Maps Scraper</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-blue-600 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fas fa-map-marker-alt text-2xl mr-2"></i>
+                <h1 class="text-xl font-bold">Google Maps Scraper</h1>
+            </div>
+            <div>
+                <a href="{{ url_for('index') }}" class="hover:underline">Ana Sayfa</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto my-6 px-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% set alert_color = "blue" %}
+                    {% if category == "success" %}
+                        {% set alert_color = "green" %}
+                    {% elif category == "danger" %}
+                        {% set alert_color = "red" %}
+                    {% elif category == "warning" %}
+                        {% set alert_color = "yellow" %}
+                    {% endif %}
+                    <div class="mb-4 p-4 bg-{{ alert_color }}-100 border-l-4 border-{{ alert_color }}-500 text-{{ alert_color }}-700">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="bg-gray-800 text-white p-4 mt-8">
+        <div class="container mx-auto text-center">
+            <p>Google Maps Scraper Web Uygulaması © 2024</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tab switching functionality
+        function openTab(evt, tabName) {
+            // Hide all tab contents
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            // Remove 'active' class from all tab buttons
+            const tabButtons = document.getElementsByClassName("tab-button");
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("bg-blue-500", "text-white");
+                tabButtons[i].classList.add("bg-gray-200", "text-gray-700");
+            }
+            
+            // Show the selected tab content and mark button as active
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.remove("bg-gray-200", "text-gray-700");
+            evt.currentTarget.classList.add("bg-blue-500", "text-white");
+        }
+
+        // Set default active tab on load
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get the first tab button and simulate a click
+            const firstTabButton = document.querySelector(".tab-button");
+            if (firstTabButton) {
+                firstTabButton.click();
+            }
+        });
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

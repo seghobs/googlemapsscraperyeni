@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-6 text-center text-blue-600">Google Maps Scraper</h2>
+    
+    <!-- Tabs -->
+    <div class="mb-6">
+        <div class="flex border-b">
+            <button class="tab-button py-2 px-4 font-medium bg-gray-200 text-gray-700 rounded-t-lg mr-1" onclick="openTab(event, 'tab1')">
+                <i class="fas fa-comments mr-1"></i> Yorum Çekme
+            </button>
+            <button class="tab-button py-2 px-4 font-medium bg-gray-200 text-gray-700 rounded-t-lg mr-1" onclick="openTab(event, 'tab2')">
+                <i class="fas fa-store mr-1"></i> İşletme Arama
+            </button>
+            <button class="tab-button py-2 px-4 font-medium bg-gray-200 text-gray-700 rounded-t-lg" onclick="openTab(event, 'tab3')">
+                <i class="fas fa-chart-line mr-1"></i> İzleme Modu
+            </button>
+        </div>
+    </div>
+    
+    <!-- Tab Contents -->
+    <div id="tab1" class="tab-content">
+        <h3 class="text-lg font-semibold mb-4">Google Maps Yorumlarını Çek</h3>
+        <form method="POST" action="{{ url_for('scrape') }}">
+            {{ scraper_form.csrf_token }}
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="url">
+                    Google Maps URL (Tek URL)
+                </label>
+                {{ scraper_form.url(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder="https://www.google.com/maps/place/...") }}
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="urls_file">
+                    Veya URL Listesi (Her satıra bir URL)
+                </label>
+                {{ scraper_form.urls_file(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32", placeholder="https://www.google.com/maps/place/...\nhttps://www.google.com/maps/place/...") }}
+            </div>
+            
+            <div class="flex flex-wrap -mx-2">
+                <div class="w-full md:w-1/2 px-2 mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="num_reviews">
+                        Yorum Sayısı
+                    </label>
+                    {{ scraper_form.num_reviews(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
+                </div>
+                
+                <div class="w-full md:w-1/2 px-2 mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="sort_by">
+                        Sıralama
+                    </label>
+                    {{ scraper_form.sort_by(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="place_info">
+                    İşlem Türü
+                </label>
+                {{ scraper_form.place_info(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
+            </div>
+            
+            <div class="flex items-center justify-center">
+                {{ scraper_form.submit(class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline") }}
+            </div>
+        </form>
+    </div>
+    
+    <div id="tab2" class="tab-content">
+        <h3 class="text-lg font-semibold mb-4">İşletme Arama</h3>
+        <form method="POST" action="{{ url_for('scrape_places') }}">
+            {{ places_form.csrf_token }}
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="keyword">
+                    Arama Kelimesi
+                </label>
+                {{ places_form.keyword(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder="örn. romantik restoran") }}
+            </div>
+            
+            <div class="flex items-center justify-center mt-6">
+                {{ places_form.submit(class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline") }}
+            </div>
+        </form>
+        
+        <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h4 class="font-semibold text-blue-800">Not:</h4>
+            <p class="text-blue-700 text-sm">Bu özellik, belirli bir arama terimini kullanarak Google Haritalar'da işletmeleri arar. İşletme arama işlevi için, uygulama input/ klasöründeki square_points.csv dosyasını kullanır. Bu dosya, arama yapılacak koordinatları içerir.</p>
+        </div>
+    </div>
+    
+    <div id="tab3" class="tab-content">
+        <h3 class="text-lg font-semibold mb-4">İzleme Modu</h3>
+        <form method="POST" action="{{ url_for('monitor') }}">
+            {{ monitor_form.csrf_token }}
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="urls_file">
+                    URL Listesi (Her satıra bir URL)
+                </label>
+                {{ monitor_form.urls_file(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-32", placeholder="https://www.google.com/maps/place/...\nhttps://www.google.com/maps/place/...") }}
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="from_date">
+                    Başlangıç Tarihi (YYYY-MM-DD)
+                </label>
+                {{ monitor_form.from_date(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder="2023-01-01") }}
+            </div>
+            
+            <div class="flex items-center justify-center mt-6">
+                {{ monitor_form.submit(class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline") }}
+            </div>
+        </form>
+        
+        <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <h4 class="font-semibold text-yellow-800">Not:</h4>
+            <p class="text-yellow-700 text-sm">İzleme modu, belirtilen tarihten sonraki yeni yorumları takip etmeye yarar. Bu özellik tam olarak çalışması için MongoDB kurulumu gerektirmektedir. Bu web arayüzü şu anda izleme için temel bir simülasyon sunmaktadır.</p>
+        </div>
+    </div>
+</div>
+{% endblock %} 
